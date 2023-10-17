@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace NSE.WebApp.MVC.Services
 {
-    public class AuthService : IAuthService
+    public class AuthService : Service, IAuthService
     {
         private readonly HttpClient _httpClient;
 
@@ -29,6 +29,14 @@ namespace NSE.WebApp.MVC.Services
                 PropertyNameCaseInsensitive = true,
             };
 
+            if (!HandleErrorResponse(response))
+            {
+                return new UserLoginResponse
+                {
+                    ResponseResult = JsonSerializer.Deserialize<ResponseResult>(await response.Content.ReadAsStringAsync(), options)
+                };
+            };          
+
             return JsonSerializer.Deserialize<UserLoginResponse>(await response.Content.ReadAsStringAsync(), options);
         }
 
@@ -40,6 +48,19 @@ namespace NSE.WebApp.MVC.Services
                 "application/json");
 
             var response = await _httpClient.PostAsync("https://localhost:44320/api/identity/register", registerContent);
+
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true,
+            };
+
+            if (!HandleErrorResponse(response))
+            {
+                return new UserLoginResponse
+                {
+                    ResponseResult = JsonSerializer.Deserialize<ResponseResult>(await response.Content.ReadAsStringAsync(), options)
+                };
+            }
 
             return JsonSerializer.Deserialize<UserLoginResponse>(await response.Content.ReadAsStringAsync());
         }
