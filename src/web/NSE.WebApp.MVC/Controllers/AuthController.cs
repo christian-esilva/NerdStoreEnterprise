@@ -11,11 +11,11 @@ using System.Threading.Tasks;
 
 namespace NSE.WebApp.MVC.Controllers
 {
-    public class IdentityController : MainController
+    public class AuthController : MainController
     {
         private readonly IAuthService _authService;
 
-        public IdentityController(IAuthService authService)
+        public AuthController(IAuthService authService)
         {
             _authService = authService;
         }
@@ -44,15 +44,17 @@ namespace NSE.WebApp.MVC.Controllers
 
         [HttpGet]
         [Route("login")]
-        public IActionResult Login()
+        public IActionResult Login(string returnUrl = null)
         {
+            ViewData["ReturnUrl"] = returnUrl;
             return View();
         }
 
         [HttpPost]
         [Route("login")]
-        public async Task<ActionResult> Login(UserLoginViewModel userLogin)
+        public async Task<ActionResult> Login(UserLoginViewModel userLogin, string returnUrl = null)
         {
+            ViewData["ReturnUrl"] = returnUrl;
             if (!ModelState.IsValid) return View(userLogin);
 
             // API - Login
@@ -60,10 +62,12 @@ namespace NSE.WebApp.MVC.Controllers
 
             if (HasErrorsResponse(response.ResponseResult)) return View(userLogin);
 
-                // Realizar login
-                await SignIn(response);
+            // Realizar login
+            await SignIn(response);
 
-            return RedirectToAction("Index", "Home");
+            if (string.IsNullOrEmpty(returnUrl)) return RedirectToAction("Index", "Home");
+
+            return LocalRedirect(returnUrl);
         }
 
         [HttpGet]
