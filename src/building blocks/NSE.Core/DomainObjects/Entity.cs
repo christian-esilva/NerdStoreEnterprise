@@ -1,4 +1,4 @@
-﻿using System;
+﻿using NSE.Core.Messages;
 
 namespace NSE.Core.DomainObjects
 {
@@ -6,6 +6,31 @@ namespace NSE.Core.DomainObjects
     {
         public Guid Id { get; set; }
 
+        private List<Event> _events;
+        public IReadOnlyCollection<Event>? Events => _events?.AsReadOnly();
+
+        protected Entity()
+        {
+            Id = Guid.NewGuid();
+        }
+
+        public void AddEvent(Event e)
+        {
+            _events ??= new List<Event>();
+            _events.Add(e);
+        }
+
+        public void RemoveEvent(Event e)
+        {
+            _events?.Remove(e);
+        }
+
+        public void ClearEvents()
+        {
+            _events?.Clear();
+        }
+
+        #region Comparisons 
         public override bool Equals(object obj)
         {
             var compareTo = obj as Entity;
@@ -36,6 +61,7 @@ namespace NSE.Core.DomainObjects
         {
             return (GetType().GetHashCode() * 907) + Id.GetHashCode();
         }
+        #endregion
 
         public override string ToString()
         {

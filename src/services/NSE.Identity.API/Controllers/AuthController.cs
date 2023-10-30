@@ -2,7 +2,10 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using NSE.Core.Messages.Integration;
 using NSE.Identity.API.Models;
+using NSE.MessageBus.Contracts;
+using NSE.WebApi.Core.Controllers;
 using NSE.WebApi.Core.Identity;
 using System;
 using System.Collections.Generic;
@@ -22,11 +25,17 @@ namespace NSE.Identity.API.Controllers
         private readonly UserManager<IdentityUser> _userManager;
         private readonly AppSettings _appSettings;
 
-        public AuthController(SignInManager<IdentityUser> signInManager, UserManager<IdentityUser> userManager, IOptions<AppSettings> appSettings)
+        private readonly IMessageBus _bus;
+
+        public AuthController(SignInManager<IdentityUser> signInManager, 
+            UserManager<IdentityUser> userManager, 
+            IOptions<AppSettings> appSettings, 
+            IMessageBus bus)
         {
             _signInManager = signInManager;
             _userManager = userManager;
             _appSettings = appSettings.Value;
+            _bus = bus;
         }
 
         [HttpPost("register")]
@@ -44,8 +53,18 @@ namespace NSE.Identity.API.Controllers
             var result = await _userManager.CreateAsync(user, userRegister.Password);
 
             if (result.Succeeded)
-                return CustomResponse(await GenerateJWT(userRegister.Email));
+            {
+                var customerResult = await RegisterCustomer(userRegister);
 
+                if (!customerResult.ValidationResult.IsValid)
+                {
+                    await _userManager.DeleteAsync(user);
+                    return CustomResponse(customerResult.ValidationResult);
+                }
+
+                return CustomResponse(await GenerateJWT(userRegister.Email));
+            }
+                
             foreach (var error in result.Errors)
                 AddProcessingErrors(error.Description);
 
@@ -136,5 +155,21 @@ namespace NSE.Identity.API.Controllers
 
         private static long ToUnixEpochDate(DateTime date)
             => (long)Math.Round((date.ToUniversalTime() - new DateTimeOffset(1970, 1, 1, 0, 0, 0, TimeSpan.Zero)).TotalSeconds);
+
+        private async Task<ResponseMessage> RegisterCustomer(UserRegister userRegister)
+        {
+            var user = await _userManager.FindByEmailAsync(userRegister.Email);
+            var userRegistered = new UserRegisteredIntegrationEvent(Guid.Parse(user.Id), userRegister.Name, userRegister.Email, userRegister.Cpf);
+
+            try
+            {
+                return await _bus.RequestAsync<UserRegisteredIntegrationEvent, ResponseMessage>(userRegistered);
+            }
+            catch
+            {
+                await _userManager.DeleteAsync(user);
+                throw;
+            }
+        }
     }
 }

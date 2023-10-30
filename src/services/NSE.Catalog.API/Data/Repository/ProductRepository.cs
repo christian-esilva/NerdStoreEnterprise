@@ -16,7 +16,7 @@ namespace NSE.Catalog.API.Data.Repository
             _context = context;
         }
 
-        public IUnityOfWork unityOfWork => _context;
+        public IUnityOfWork UnityOfWork => _context;
 
         public async Task<IEnumerable<Product>> GetAllAsync()
         {

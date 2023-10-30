@@ -44,5 +44,11 @@ namespace NSE.WebApi.Core.Identity
             app.UseAuthentication();
             app.UseAuthorization();
         }
+
+        public static void UseAuthConfiguration(this WebApplication app)
+        {
+            app.UseAuthentication();
+            app.UseAuthorization();
+        }
     }
 }
