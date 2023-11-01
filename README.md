@@ -8,7 +8,6 @@ NerdStoreEnterprise é um ecommerce para o público Nerd
     - ASP.NET WebApi
     - ASP.NET Identity Core
     - JWT
-    - JWT 
     - Background Services
     - Entity Framework Core 6
 
