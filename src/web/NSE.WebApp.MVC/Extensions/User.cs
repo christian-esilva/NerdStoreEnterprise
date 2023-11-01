@@ -1,11 +1,12 @@
 ﻿using Microsoft.AspNetCore.Http;
+using NSE.WebApi.Core.User;
 using System;
 using System.Collections.Generic;
 using System.Security.Claims;
 
 namespace NSE.WebApp.MVC.Extensions
 {
-    public class User : IUser
+    public class User : IAspNetUser
     {
         private readonly IHttpContextAccessor _acessor;
 
@@ -16,10 +17,10 @@ namespace NSE.WebApp.MVC.Extensions
 
         public string Name => _acessor.HttpContext.User.Identity.Name;
 
-        public string GetByEmail() 
+        public string GetUserEmail() 
             => IsAuthenticated() ? _acessor.HttpContext.User.GetUserEmail() : "";
 
-        public Guid GetById() 
+        public Guid GetUserId() 
             => IsAuthenticated() ? Guid.Parse(_acessor.HttpContext.User.GetUserId()) : Guid.Empty;
 
         public IEnumerable<Claim> GetClaims()
@@ -28,7 +29,7 @@ namespace NSE.WebApp.MVC.Extensions
         public HttpContext GetHttpContext()
             => _acessor.HttpContext;
 
-        public string GetToken() 
+        public string GetUserToken() 
             => IsAuthenticated() ? _acessor.HttpContext.User.GetUserToken() : "";
 
         public bool HasRole(string role)

@@ -1,16 +1,14 @@
 ﻿using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
 using System.Security.Claims;
 
-namespace NSE.WebApp.MVC.Extensions
+namespace NSE.WebApi.Core.User
 {
-    public interface IUser
+    public interface IAspNetUser
     {
         string Name { get; }
-        Guid GetById();
-        string GetByEmail();
-        string GetToken();
+        Guid GetUserId();
+        string GetUserEmail();
+        string GetUserToken();
         bool IsAuthenticated();
         bool HasRole(string role);
         IEnumerable<Claim> GetClaims();

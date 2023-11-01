@@ -1,6 +1,6 @@
 ﻿using Microsoft.OpenApi.Models;
 
-namespace NSE.Customers.API.Configuration
+namespace NSE.Cart.API.Configuration
 {
     public static class SwaggerConfig
     {
@@ -10,7 +10,7 @@ namespace NSE.Customers.API.Configuration
             {
                 c.SwaggerDoc("v1", new OpenApiInfo
                 {
-                    Title = "NerdStore Enterprise Customers API",
+                    Title = "NerdStore Enterprise - Carrinho API",
                     Description = "Está API faz parte do curso ASP .NET Core Enterprise Applications.",
                     Contact = new OpenApiContact() { Name = "Christian Silva", Email = "christian.eds@hotmail.com" },
                     License = new OpenApiLicense() { Name = "MIT", Url = new Uri("https://opensource.org/licenses/MIT") }

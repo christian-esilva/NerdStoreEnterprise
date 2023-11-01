@@ -1,4 +1,5 @@
-﻿using NSE.WebApp.MVC.Extensions;
+﻿using NSE.WebApi.Core.User;
+using NSE.WebApp.MVC.Extensions;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -9,9 +10,9 @@ namespace NSE.WebApp.MVC.Services.Handlers
 {
     public class HttpClientAuthorizationDelegatingHandler : DelegatingHandler
     {
-        private readonly IUser _user;
+        private readonly IAspNetUser _user;
 
-        public HttpClientAuthorizationDelegatingHandler(IUser user)
+        public HttpClientAuthorizationDelegatingHandler(IAspNetUser user)
         {
             _user = user;
         }
@@ -23,7 +24,7 @@ namespace NSE.WebApp.MVC.Services.Handlers
             if(!string.IsNullOrEmpty(authorizationHeader) )           
                 request.Headers.Add("Authorization", new List<string>() { authorizationHeader });
 
-            var token = _user.GetToken();
+            var token = _user.GetUserToken();
 
             if (token != null)
                 request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);

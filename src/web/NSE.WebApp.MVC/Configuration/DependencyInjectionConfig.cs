@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc.DataAnnotations;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using NSE.WebApi.Core.User;
 using NSE.WebApp.MVC.Extensions;
 using NSE.WebApp.MVC.Services;
 using NSE.WebApp.MVC.Services.Contracts;
@@ -37,7 +38,7 @@ namespace NSE.WebApp.MVC.Configuration
             #endregion
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            services.AddScoped<IUser, User>();
+            services.AddScoped<IAspNetUser, AspNetUser>();
         }
     }
 }
