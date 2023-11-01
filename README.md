@@ -26,7 +26,7 @@ NerdStoreEnterprise é um ecommerce para o público Nerd
     - IIS
     - Docker (with compose)
       
-### Complete architecture implementing the most important and used concerns as:
+### Arquitetura completa implementando as preocupações mais importantes e utilizadas como:
 
 - Hexagonal Architecture
 - Clean Code
